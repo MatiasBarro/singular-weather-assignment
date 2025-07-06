@@ -16,7 +16,7 @@ class WeatherTemperatureFieldExtractor(WeatherFieldExtractor):
         unit = self.parse_unit(data.current_units[self.data_key])
         value = self.convert_to_temperature(data.current[self.data_key], unit, self.unit)
 
-        return Field(self.field_name, self.field_key, self.unit.value, value)
+        return Field(self.field_name, self.field_key, self.unit.value, round(value, 1))
 
     def parse_unit(self, unit: str):
         if TemperatureUnit.CELSIUS.value in unit.lower():

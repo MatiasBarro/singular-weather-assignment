@@ -17,6 +17,10 @@ def load_cities() -> list[CityDTO]:
             cities.append(CityDTO(city['City'], city['Latitude'], city['Longitude']))
     return cities
 
+def create_output_directory():
+    if not os.path.exists("./output"):
+        os.makedirs("./output")
+
 
 def main():
     if not os.getenv('OPEN_METEO_API_URL'):
@@ -46,6 +50,10 @@ def main():
 
     # Print the result
     pandasConsumer.print()
+
+    # Export the result to a CSV file
+    create_output_directory()
+    pandasConsumer.export_to_csv("./output/weather_data.csv")
 
 if __name__ == "__main__":
     main()
