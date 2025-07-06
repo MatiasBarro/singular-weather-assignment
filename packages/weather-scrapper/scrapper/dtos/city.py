@@ -1,11 +1,5 @@
 from dataclasses import dataclass
-
-@dataclass
-class CityDTO:
-    name: str
-    latitude: float
-    longitude: float
-
+from dtos.city import CityDTO
 
 @dataclass
 class CityWeatherApiResponseDTO(CityDTO):
