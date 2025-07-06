@@ -1,5 +1,6 @@
 import requests
-from dtos.city_dto import CityDTO, CityWeatherApiResponseDTO
+from dtos.city import CityDTO
+from scrapper.dtos.city import CityWeatherApiResponseDTO
 
 class HttpWeatherDataScrapper:
     def __init__(self, url):
