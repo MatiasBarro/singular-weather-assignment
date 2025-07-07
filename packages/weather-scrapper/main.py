@@ -45,6 +45,27 @@ def get_cities_from_args():
     
     return cities
 
+def filter_weather(pandas_consumer: PandasConsumer):
+    """
+    Interactively prompts the user for filter criteria and applies them.
+    """
+
+    available_fields = pandas_consumer.get_fields_to_filter()
+    print("\n--- Filter Weather Data ---\n")
+    
+    field_filter = input(f"Enter fields to filter by (available: {','.join(available_fields)}): ").strip()
+
+    if not field_filter or field_filter not in available_fields:
+        print("Invalid field. Please enter a valid field.\n")
+        return
+
+    filter_range = input(f"Enter range for {field_filter} (e.g., 10-25): ").strip()
+    min_value, max_value = filter_range.split('-')
+    if not min_value or not max_value or max_value < min_value:
+        print("Invalid range. Please enter a valid range.\n")
+        return
+    
+    pandas_consumer.apply_filter(field_filter, float(min_value), float(max_value))
 
 def main():
     """
@@ -77,22 +98,21 @@ def main():
      # Process the weather data
     weatherDataProcessor.process(cities_weather)
 
-    # Print the result
-    pandasConsumer.print()
-    print("\n")
-
     # Export the result to a CSV file
     create_output_directory()
     pandasConsumer.export_to_csv("./output/weather_data.csv")
 
     while True:
+        # Print the result
+        pandasConsumer.print()
+        print("\n")
         print("1. Filter Weather Data")
         print("2. Rank Weather Data")
         print("3. Exit")
         choice = input("Enter your choice (1-3): ").strip()
 
         if choice == '1':
-            print('filter_weather')
+            filter_weather(pandasConsumer)
         elif choice == '2':
             print('rank_weather')
         elif choice == '3':
