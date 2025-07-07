@@ -17,10 +17,10 @@ class PandasConsumer:
 
         self.df = pd.DataFrame(df_data)
     
-    def get_fields_to_filter(self):
+    def get_fields(self):
         return self.fields.keys()
     
-    def apply_filter(self, field_key: str, min_value: float, max_value: float) -> pd.DataFrame:
+    def apply_filter(self, field_key: str, min_value: float, max_value: float):
         if not field_key in self.fields:
             raise Exception(f"Field '{field_key}' not found.")
         
@@ -31,6 +31,14 @@ class PandasConsumer:
             return
     
         print(filtered_df)
+
+    def apply_ranking(self, field_key: str, order: str):
+        if not field_key in self.fields:
+            raise Exception(f"Field '{field_key}' not found.")
+        
+        is_ascending = True if order == 'asc' else False
+        sorted_df = self.df.sort_values(by=[self.fields[field_key]], ascending=is_ascending)
+        print(sorted_df)
     
     def print(self):
         print(self.df)

@@ -9,7 +9,7 @@ from data_processor.consumer import PandasConsumer
 
 load_dotenv()
 
-def load_cities() -> list[CityDTO]:
+def load_cities() -> dict[str, CityDTO]:
     """
     Parse the cities.json file and return a list of CityDTO objects
     """   
@@ -34,7 +34,7 @@ def get_cities_from_args():
     args = parser.parse_args()
     if not args.cities:
         print("No cities entered. Using default cities.")
-        return cityMap.values()
+        return list(cityMap.values())
     
     argsCities = args.cities.strip().split(',')
     cities = []
@@ -50,22 +50,43 @@ def filter_weather(pandas_consumer: PandasConsumer):
     Interactively prompts the user for filter criteria and applies them.
     """
 
-    available_fields = pandas_consumer.get_fields_to_filter()
     print("\n--- Filter Weather Data ---\n")
+    available_fields = pandas_consumer.get_fields()
     
-    field_filter = input(f"Enter fields to filter by (available: {','.join(available_fields)}): ").strip()
+    field_filter = input(f"Enter field to filter by (available: {','.join(available_fields)}): ").strip()
 
     if not field_filter or field_filter not in available_fields:
         print("Invalid field. Please enter a valid field.\n")
         return
 
     filter_range = input(f"Enter range for {field_filter} (e.g., 10-25): ").strip()
-    min_value, max_value = filter_range.split('-')
+    min_value, max_value = [float(part.strip()) for part in filter_range.split('-')] 
     if not min_value or not max_value or max_value < min_value:
         print("Invalid range. Please enter a valid range.\n")
         return
     
-    pandas_consumer.apply_filter(field_filter, float(min_value), float(max_value))
+    pandas_consumer.apply_filter(field_filter, min_value, max_value)
+    print('\n------------------------------\n')
+
+def rank_cities(pandas_consumer: PandasConsumer):
+    """
+    Interactively prompts the user for ranking criteria and ranks the data.
+    """
+    print("\n--- Rank Weather Data ---\n")
+    available_fields = pandas_consumer.get_fields()
+    rank_field = input(f"Enter fields to rank by (available: {','.join(available_fields)}): ").strip()
+    if not rank_field or rank_field not in available_fields:
+        print("Invalid field. Please enter a valid field.\n")
+        return
+
+    order = input("Order (asc for ascending, desc for descending): ").strip().lower()
+    if order not in ['asc', 'desc']:
+        print("Invalid order. Please enter 'asc' or 'desc'.\n")
+        return
+    
+    print(f"Ranking cities by '{rank_field}' in {order}ending order...")
+    pandas_consumer.apply_ranking(rank_field, order)
+    print('\n------------------------------\n')
 
 def main():
     """
@@ -102,24 +123,28 @@ def main():
     create_output_directory()
     pandasConsumer.export_to_csv("./output/weather_data.csv")
 
+    # Print the result
+    pandasConsumer.print()
+
     while True:
-        # Print the result
-        pandasConsumer.print()
         print("\n")
-        print("1. Filter Weather Data")
-        print("2. Rank Weather Data")
-        print("3. Exit")
-        choice = input("Enter your choice (1-3): ").strip()
+        print("1. Show Weather Data")
+        print("2. Filter Weather Data")
+        print("3. Rank Weather Data")
+        print("4. Exit")
+        choice = input("Enter your choice (1-4): ").strip()
 
         if choice == '1':
-            filter_weather(pandasConsumer)
+            pandasConsumer.print()
         elif choice == '2':
-            print('rank_weather')
+            filter_weather(pandasConsumer)
         elif choice == '3':
+            rank_cities(pandasConsumer)
+        elif choice == '4':
             print("Exiting application...")
             break
         else:
-            print("Invalid choice. Please enter a number between 1 and 3. \n")
+            print("Invalid choice. Please enter a number between 1 and 4. \n")
 
 if __name__ == "__main__":
     main()
