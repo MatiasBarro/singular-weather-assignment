@@ -1,0 +1,60 @@
+# Singular - Weather Data Scrapper
+
+- [Overview](#overview)
+- [Instructions](#usage)
+  - [Requirements](#requirements)
+  - [Setup](#setup)
+  - [Usage](#usage)
+
+## Overview
+
+This is a Python CLI application that allows the user to fetch weather data from several cities using the Open Meteo API. The application loads the data in a [Pandas Data Frame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html) and displays the results in a user-friendly format. The application also allows the user to filter and rank the data based on specific criteria. Finally, the application exports the results to a CSV file.
+
+## Instructions
+
+### Requirements
+- Python 3.12 or higher
+- [uv](https://docs.astral.sh/uv/)
+- [Open Meteo API URL](https://open-meteo.com/en/docs)
+
+### Setup
+1. Sync the project dependencies by running the following command in the root directory of the project:
+```bash
+uv sync
+```
+
+2. Go to project directory by running the following command:
+```bash
+cd /packages/weather-scrapper
+```
+
+### Usage
+
+1. Create a `.env` file in the root directory of the project with the following content:
+```
+OPEN_METEO_API_URL=https://api.open-meteo.com
+```
+
+2. Run the application by running the following command providing a comma-separated list of cities:
+```bash
+uv run main.py --cities London,Paris,"New York"
+```
+
+if `--cities` is not provided, the application will use the default cities. 
+
+You can also run the application with `--help` to see the available options and cities:
+```bash
+uv run main.py --help
+```
+
+3. The application will fetch the weather data from the Open Meteo API and display the results in a user-friendly format. Then the program will prompt you to choose an action:
+
+![alt text](../../docs/weather_scrapper_screenshot_1.png)
+
+- **Show Weather Data**: This action will display the weather data in a user-friendly format.
+- **Filter Weather Data**: This action will allow you to filter the weather data based on specific criteria. You will be prompted to enter the field to filter by and the range of values to filter. The application will then display the filtered data.
+![alt text](../../docs/weather_scrapper_screenshot_2.png)
+
+- **Rank Weather Data**: This action will allow you to rank the weather data based on specific criteria. You will be prompted to enter the fields to rank by and the order (ascending or descending). The application will then display the ranked data.
+![alt text](../../docs/weather_scrapper_screenshot_3.png)
+- **Exit**: This action will exit the application.
