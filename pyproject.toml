@@ -7,12 +7,15 @@ requires-python = ">=3.12"
 dependencies = [
     "dotenv>=0.9.9",
     "weather-scrapper",
+    "weather-api",
 ]
 
 [tool.uv.sources]
 weather-scrapper = { workspace = true }
+weather-api = { workspace = true }
 
 [tool.uv.workspace]
 members = [
     "packages/weather-scrapper",
+    "packages/weather-api",
 ]

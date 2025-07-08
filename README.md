@@ -4,6 +4,7 @@ This is a [simple weather data assignment](./docs/assignment_documentation.pdf) 
 
 
 - [Weather Data Scrapper Documentation](./packages/weather-scrapper/README.md)
+- [Weather Data Api Documentation](./packages/weather-api/README.md)
 
 
 Developed by [Matias Barro Beotegui](https://github.com/matiasbarro)

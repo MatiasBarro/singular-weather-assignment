@@ -29,9 +29,9 @@ uv sync
 cd /packages/weather-scrapper
 ```
 
-2. Sign up for an [API Ninja](https://www.api-ninjas.com/register) account and get your API Ninja key.
+3. Sign up for an [API Ninja](https://www.api-ninjas.com/register) account and get your API Ninja key.
 
-3. Create a `.env` file in the root directory of the project with the following content:
+4. Create a `.env` file in the root directory of the project with the following content:
 ```
 OPEN_METEO_API_URL=https://api.open-meteo.com
 API_NINJA_CITY_API_URL=https://api.api-ninjas.com/v1/city
