@@ -62,6 +62,7 @@ uv run main.py --help
 
 - **Rank Weather Data**: This action will allow you to rank the weather data based on specific criteria. You will be prompted to enter the fields to rank by and the order (ascending or descending). The application will then display the ranked data.
 ![alt text](../../docs/weather_scrapper_screenshot_3.png)
+- **Plot Weather Data**: This action will generate a bar char plot for each city and weather field. The plots will be saved to the `output` directory.
 - **Exit**: This action will exit the application.
 
-Csv file will be created in the `output` directory.
+A CSV file with the weather data will be created in the `output` directory.
