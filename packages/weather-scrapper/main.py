@@ -5,7 +5,7 @@ from dtos.city import CityDTO
 from api import CityNinjaApi
 from scrapper.http_weather_data_scrapper import HttpWeatherDataScrapper
 from data_processor import WeatherDataProcessor, WeatherFieldExtractor, WeatherTemperatureFieldExtractor, TemperatureUnit, WeatherWindFieldExtractor, WindSpeedUnit
-from data_processor.consumer import PandasConsumer
+from data_processor.consumer import PandasConsumer, MatPlotLibConsumer
 
 load_dotenv()
 
@@ -75,6 +75,11 @@ def rank_cities(pandas_consumer: PandasConsumer):
     pandas_consumer.apply_ranking(rank_field, order)
     print('\n------------------------------\n')
 
+def plot_weather(consumer: MatPlotLibConsumer):
+    print("Plotting Weather Data...\n")
+    consumer.plot()
+    print('Plots saved to output folder.\n')
+
 def main():
     """
     Main interactive loop for the weather application.
@@ -90,6 +95,7 @@ def main():
     # Initialize the weather data processor with the field extractors and consumers
     weatherDataProcessor = WeatherDataProcessor()
     pandasConsumer = PandasConsumer()
+    matPlotLibConsumer = MatPlotLibConsumer()
 
     weatherDataProcessor.with_field_extractor(WeatherFieldExtractor("Humidity (%)", "humidity", "relative_humidity_2m"))
     weatherDataProcessor.with_field_extractor(WeatherTemperatureFieldExtractor("Temperature (C)", "temperature_celsius", "temperature_2m", TemperatureUnit.CELSIUS))
@@ -98,14 +104,14 @@ def main():
     weatherDataProcessor.with_field_extractor(WeatherWindFieldExtractor("Wind (mph)", "wind_mph", "wind_speed_10m", WindSpeedUnit.MILES_PER_HOUR))
 
     weatherDataProcessor.with_consumer(pandasConsumer)
+    weatherDataProcessor.with_consumer(matPlotLibConsumer)
 
     # Get the current weather for each city using the Open Meteo API
     print("Fetching weather data...\n")
     cities_weather = scrapper.get_cities_current_weather(cities)
 
      # Process the weather data
-    weatherDataProcessor.process(cities_weather)
-
+    weatherDataProcessor.process(cities_weather)    
     # Export the result to a CSV file
     create_output_directory()
     pandasConsumer.export_to_csv("./output/weather_data.csv")
@@ -118,8 +124,9 @@ def main():
         print("1. Show Weather Data")
         print("2. Filter Weather Data")
         print("3. Rank Weather Data")
-        print("4. Exit")
-        choice = input("Enter your choice (1-4): ").strip()
+        print("4. Plot Weather Data")
+        print("5. Exit")
+        choice = input("Enter your choice (1-5): ").strip()
 
         if choice == '1':
             pandasConsumer.print()
@@ -128,10 +135,12 @@ def main():
         elif choice == '3':
             rank_cities(pandasConsumer)
         elif choice == '4':
+            plot_weather(matPlotLibConsumer)
+        elif choice == '5':
             print("Exiting application...")
             break
         else:
-            print("Invalid choice. Please enter a number between 1 and 4. \n")
+            print("Invalid choice. Please enter a number between 1 and 5. \n")
 
 if __name__ == "__main__":
     main()
