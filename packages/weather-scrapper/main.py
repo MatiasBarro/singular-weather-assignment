@@ -1,47 +1,34 @@
 import os
-import json
 import argparse
 from dotenv import load_dotenv
 from dtos.city import CityDTO
+from api import CityNinjaApi
 from scrapper.http_weather_data_scrapper import HttpWeatherDataScrapper
 from data_processor import WeatherDataProcessor, WeatherFieldExtractor, WeatherTemperatureFieldExtractor, TemperatureUnit, WeatherWindFieldExtractor, WindSpeedUnit
 from data_processor.consumer import PandasConsumer
 
 load_dotenv()
 
-def load_cities() -> dict[str, CityDTO]:
-    """
-    Parse the cities.json file and return a list of CityDTO objects
-    """   
-    cities = {}
-    with open('./cities.json') as file:
-        data = json.load(file)
-        for city in data:
-            cities[city['City']] = CityDTO(city['City'], city['Latitude'], city['Longitude'])
-    return cities
 
 def create_output_directory():
     if not os.path.exists("./output"):
         os.makedirs("./output")
 
-def get_cities_from_args():
-    # Load the cities from the cities.json file
-    cityMap = load_cities()
+def get_cities_from_args() -> list[CityDTO]:
     parser = argparse.ArgumentParser(description='Singular - Weather Application')
-    parser.add_argument('--cities', type=str, help='List of cities separated by commas (e.g., London,Paris,New York). Allowed cities: ' + ', '.join([city for city in cityMap]))
+    parser.add_argument('--cities', type=str, help='List of cities separated by commas (e.g., London,Paris,New York)')
 
+    cityApi = CityNinjaApi(os.getenv('API_NINJA_CITY_API_URL'), os.getenv('API_NINJA_CITY_API_KEY'))
+    
     # Parse the command line arguments
     args = parser.parse_args()
     if not args.cities:
         print("No cities entered. Using default cities.")
-        return list(cityMap.values())
+        return list(cityApi.get_pre_loaded_cities().values())
     
     argsCities = args.cities.strip().split(',')
-    cities = []
-    for city in argsCities:
-        if city not in cityMap:
-            raise Exception(f"City '{city}' is not an allowed city")
-        cities.append(cityMap[city])
+    print('Fetching cities...\n')
+    cities = cityApi.fetch_cities(argsCities)
     
     return cities
 
